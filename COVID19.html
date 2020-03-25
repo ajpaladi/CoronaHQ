@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>COVID-19</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+        <script src="../leaflet-ajax-gh-pages/dist/leaflet.ajax.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
+        <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+        <script src="leaflet-tag-filter-button-master/src/leaflet-tag-filter-button.js"></script>
+        <link rel="stylesheet" href="leaflet-tag-filter-button-master/src/leaflet-tag-filter-button.css" />
+        <link href='https://fonts.googleapis.com/css?family=Abel' rel='stylesheet'>
+        <script src="../Leaflet.FileLayer-master/src/leaflet.filelayer.js"></script>
+        <script src="https://unpkg.com/togeojson@0.16.0"></script>
+        <link rel="stylesheet" href="Leaflet.markercluster-master/dist/MarkerCluster.css" />
+        <link rel="stylesheet" href="Leaflet.markercluster-1.4.1/dist/MarkerCluster.Default.css" />
+        <script src="Leaflet.markercluster-1.4.1/dist/leaflet.markercluster-src.js"></script>
+        <link rel="stylesheet" href="https://ppete2.github.io/Leaflet.PolylineMeasure/Leaflet.PolylineMeasure.css" />
+        <script src="https://ppete2.github.io/Leaflet.PolylineMeasure/Leaflet.PolylineMeasure.js"></script>
+        <link rel="stylesheet" href="Leaflet.MousePosition-master/src/L.Control.MousePosition.css" />
+        <script src="Leaflet.MousePosition-master/src/L.Control.MousePosition.js"></script>
+        <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+        <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+        <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
+        <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js">
+        </script>
+        <script src="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
+        <link href="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css" rel="stylesheet" />
+    </head>
+    <style>
+            #MarriottSites {
+                height: 100vh;
+                width: 75vw;
+                background-color: whitesmoke;
+            }
+            #Side_Panel {
+                background-color: maroon;
+                position: absolute;
+                width: 25vw;
+                height: 100vh;
+                right: 0px;
+                margin-left: inherit;
+            }
+            .form-control btn-danger {
+                background-color: maroon;
+                font-size: 1.2em;
+                font-family: 'Abel';
+            }
+            h1 {
+                text-decoration: underline;
+                font-size: 2em;
+                color: whitesmoke;
+            }
+            .dropbtn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 16px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            }
+
+            .dropbtn:hover, .dropbtn:focus {
+            background-color: #3e8e41;
+            }
+
+            #myInput {
+            box-sizing: border-box;
+            background-image: url('searchicon.png');
+            background-position: 14px 12px;
+            background-repeat: no-repeat;
+            font-size: 16px;
+            padding: 14px 20px 12px 45px;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            }
+
+            #myInput:focus {outline: 3px solid #ddd;}
+
+            .dropdown {
+            position: relative;
+            display: inline-block;
+            }
+
+            .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f6f6f6;
+            min-width: 230px;
+            overflow: auto;
+            border: 1px solid #ddd;
+            z-index: 1;
+            }
+
+            .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            }
+
+            .dropdown a:hover {background-color: #ddd;}
+
+            .show {display: block;}
+        </style>
+    <body>
+        <div id= "MarriottSites" class="col-md-9">Courtyard Marriott US</div>
+        <div id="Side_Panel" class="col-md-3">
+            <h1 id="Site Key" class="text-center">Marriott Site Tracker</h1>
+            <div class="dropdown">
+                <button onclick="myFunction()" class="dropbtn1">Completed ▼ </button>
+                <div id="myDropdown" class="dropdown-content">
+                    <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
+                    <a class="Hotel1" href="#hotel">Courtyard Richmond VA: 2/1</a>
+                    <a class="Hotel2" href="#hotel">Courtyard San Antonio Airport TX: 2/28</a>
+                    <a class="Hotel3" href="#hotel">Courtyard Covington LA: 2/28</a>
+                    <a class="Hotel4" href="#hotel">Courtyard Metairie LA: 2/28</a>
+                    <a class="Hotel5" href="#hotel">Courtyard San Antonio Market Square TX: 2/28</a>
+                </div>
+                
+                <div class="dropdown">
+                <button onclick="myFunction()" class="dropbtn2">In Progress ▼ </button>
+                <div id="myDropdown" class="dropdown-content">
+                    <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
+                </div>
+                    
+                <div class="dropdown">
+                <button onclick="myFunction()" class="dropbtn3">Planned ▼ </button>
+                <div id="myDropdown" class="dropdown-content">
+                    <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
+                    <a class="Hotel6" href="#hotel">Atlanta Alpharetta 2/10</a>
+                </div>
+            </div>
+            </div>
+            </div>
+        <script>
+            
+         // lines 135-152 is the function that initiates the drop down menus
+            
+            function myFunction() {
+            document.getElementById("myDropdown").classList.toggle("show");
+            }
+
+            function filterFunction() {
+            var input, filter, ul, li, a, i;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            div = document.getElementById("myDropdown");
+            a = div.getElementsByTagName("a");
+            for (i = 0; i < a.length; i++) { txtValue=a[i].textContent || a[i].innerText; if (txtValue.toUpperCase().indexOf(filter)> -1) {
+                a[i].style.display = "";
+                } else {
+                a[i].style.display = "none";
+                }
+              }
+            }
+           
+        
+           var basemapLayer = L.tileLayer("https://api.mapbox.com/styles/v1/measure/ck84p874y04451ikw1d6kfdaq/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWVhc3VyZSIsImEiOiJjanV6dW00NjIxY3liNDNwZnc4eWozbjY0In0.zj7VWavAGgdjQpOwWoXDqA",{
+                minZoom: 2,
+                maxZoom: 22,
+                maxNativeZoom: 25,
+            });
+            
+            var mymap = L.map("MarriottSites", {
+                center: [39.73, -104.99],
+                zoom: 10,
+            });
+            
+            mymap.setView([30.441497806, -90.0855287219999], 4);
+            
+            mymap.addLayer(basemapLayer);
+            
+    // the code below adds geojson layers 
+            
+   //         var geojsonLayer = new L.GeoJSON.AJAX("GeoJSON_1/attractions.geojson").addTo(mymap); 
+            
+   //         var geojsonLayer = new L.GeoJSON.AJAX("GeoJSON_1/Inprogress.geojson").addTo(mymap);
+            
+   //         var geojsonLayer = new L.GeoJSON.AJAX("GeoJSON_1/marriott.geojson").addTo(mymap);
+            
+            var myicon = L.icon({
+                iconUrl: 'png/one.png',
+                iconSize: [30, 30],
+            });
+            
+            var scheduled = new L.GeoJSON.AJAX("https://opendata.arcgis.com/datasets/6137e495864d471799423ffc91275972_1.geojson", {pointToLayer: function(feature, latlng) {
+                var str = "<h3>"+feature.properties.Province_State+"</h3><hr>";
+                str += "<h5>" + "Active:  "+feature.properties.Confirmed+"</h5><hr>";
+                str += "<h5>" + "Recovered: "+feature.properties.Recovered+"</h5><hr>";
+                str += "<h5>" + "Deaths: "+feature.properties.Deaths+"</h5><hr>";
+                str += "</h5>";
+                str += "<h6>" + "Last Updated: "+feature.properties.Last_Update+"</h6><hr>";
+                return L.marker(latlng, {tags: [feature.properties.Confirmed]}, {icon: myicon}).bindPopup(str);
+            }});
+            
+            var marker = L.markerClusterGroup({
+                showCoverageOnHover: false,
+                spiderfyOnMaxZoom: false,
+            });
+            scheduled.on('data:loaded', function() {
+              marker.addLayer(scheduled);
+              mymap.addLayer(marker);
+          })
+           
+            L.control.tagFilterButton({
+               position: 'bottomleft',
+               data: ["Scheduled", "Completed", "None"],
+               icon: '<img src="Marriott_Site_Tracker/leaflet-tag-filter-button-master/docs/filter.png">',
+               filterOnEveryClick: true,
+               openPopupOnHover: false,
+           }).addTo(mymap);
+            
+           var control = L.control.polylineMeasure({position:'topleft', unit:'metres', showBearings:true, clearMeasurementsOnStop: false, showClearControl: true, showUnitControl: true}).addTo(mymap);
+            
+            // the below code adds the polyline measure tool you see in the map on the right hand side of the page
+            
+            // the code below adds a functional scale bar to the map. The scale bar is located at the lower left hand side of the screen
+            
+            var scaleBar = L.control.scale().addTo(mymap);
+            setInterval(function(){
+                map.setView([0, 0]);
+                setTimeout(function(){
+                    map.setView([60, 0]);
+                }, 2000);
+            }, 4000);
+            
+            var controlCoordinates = L.control.mousePosition({position:'bottomright'}).addTo(mymap);
+            
+            mymap.addControl(new L.Control.Fullscreen({position: "topright"}));
+            
+            // the code below adds click events for each hotel in the dropdown menus
+            
+            $(".Hotel1").click(function(){
+                mymap.setView([37.598, -77.512], 18.20);
+            });
+            
+            $(".Hotel2").click(function(){
+                mymap.setView([30.442, -90.085], 17.50);
+            });
+            
+            $(".Hotel3").click(function(){
+                mymap.setView([29.994, -90.152], 17.99);
+            });
+            
+            $(".Hotel4").click(function(){
+                mymap.setView([29.518, -98.488], 17.99);
+            });
+            
+            $(".Hotel5").click(function(){
+                mymap.setView([29.420,-98.498], 17.99);
+            });
+            
+            $(".Hotel6").click(function(){
+                mymap.setView([-84.26896423101425, 34.08990319116484], 17.99);
+            });
+            
+            // lines 231- 252 is javascript for adding the layer controls to the map
+            
+            var basemapLayer = {
+            "Mapbox Satellite": basemapLayer,
+            };
+
+            var overlayMaps = {
+            "sites": cities,
+            };
+            
+            L.control.layers(basemapLayer, overlayMaps).addTo(mymap);
+            
+            L.PM.initialize({ optIn: true });
+            
+            mymap.pm.addControls({
+            position: 'topright',
+            drawCircle: true,
+            drawMarker: true,
+            editMode: true,
+            removalMode: true,
+            cutPolygon:true,
+            pinningOption: true,
+            snappingOption: true,
+            }).addTo(mymap);
+            
+            var control = new L.Control.fileLayerLoad({
+                position: 'bottomleft',
+                layer: L.geoJson,
+                layerOptions: {style: {color:'red'}},
+                addToMap: true,
+                fileSizeLimit: 1024,
+                formats: [
+                    '.geojson',
+                    '.kml'
+                ]
+            }).addTo(mymap);
+            
+            control.loader.on('data:loaded', function (event) {
+                layerswitcher.addOverlay(event.layer, event.filename);
+            });
+            
+        </script>
+    </body>
+        
+</html>
