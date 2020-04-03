@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Corona_Deaths</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans|Nunito|Fjalla+One|PT+Serif|Caladea|Roboto+Slab&display=swap" rel="stylesheet">
+    <style>
+        #header {
+            height: 50px;
+            background-color: dodgerblue;
+            margin-bottom: 3px;
+            padding: 0px;
+        }
+         h2 {
+            line-height: 15px;
+            font-size: 2em;
+            color: whitesmoke;
+            font-family: 'Fjalla One', sans-serif;
+            text-align: center;
+        }
+        #CasualtyMap {
+             height: 40px;
+             width: 150px;
+             font-family: 'Caladea', serif;
+             font-size: 21px;
+             color: black;
+             position: absolute;
+             top: 9px;
+            right: 1220px;
+        }
+        #chart_div {
+            position: relative;
+            top: 10px;
+        }
+        #map {
+            height: 680px;
+            padding: 0px;
+        }
+        #statistics {
+            height: 680px;
+            padding: 5px;
+            background-color: white;
+        }
+        .MapKey {
+            height: 50px;
+            background-image: url(https://cdn.cnn.com/cnnnext/dam/assets/200130165125-corona-virus-cdc-image-super-tease.jpg);
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            text-shadow: 0 0 10px #6bf03c, 0 0 10px #6bf03c;
+            font-family: 'Caladea', serif;
+            font-size: 1.5em;
+            line-height: 70px;
+            color: white;
+            margin-bottom: 2px;
+        }
+        .rectangle1 {
+            height: 28px;
+            text-align: center;
+            line-height: 30px;
+            background-color: #acf095;
+            margin-bottom: 2px;
+            font-family: 'Caladea', serif;
+        }
+        .rectangle2 {
+            height: 34px;
+            text-align: center;
+            line-height: 36px;
+            background-color: #6bf03c;
+            margin-bottom: 2px;
+            font-family: 'Caladea', serif;
+        }
+        .rectangle3 {
+            height: 40px;
+            text-align: center;
+            line-height: 40px;
+            background-color: #359c11;
+            margin-bottom: 2px;
+            font-family: 'Caladea', serif;
+        }
+        .rectangle4 {
+            height: 46px;
+            text-align: center;
+            line-height:45px;
+            background-color: #20590c;
+            color: whitesmoke;
+            margin-bottom: 2px;
+            font-family: 'Caladea', serif;
+        }
+        .rectangle5 {
+            height: 50px;
+            line-height: 50px;
+            color: whitesmoke;
+            text-align: center;
+            background-color: #000000;
+            font-family: 'Caladea', serif;
+        }
+    </style>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+      // Load the Visualization API and the corechart package.
+      google.charts.load('current', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(drawChart);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Topping');
+        data.addColumn('number', 'Slices');
+        data.addRows([
+          ['Active', 294780],
+          ['Closed', 128005],
+          ['Deaths', 18903],
+          ['Recovered', 109102] 
+        ]);
+
+        // Set chart options
+        var options = {'title':'Categorization of Confirmed COVID19 Cases (Global)',
+                       'width':355,
+                       'height':250,
+                      };
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+</head>
+
+<body>
+    <div id="header" class="col-md-12">
+        <h2 id="site_title" class="text-center">COVID-19 Pandemic: Global Confirmed Casualties</h2>
+        <a id="CasualtyMap" href="https://ajpaladi.github.io/CoronaHQ/"><button>Cases Map</button></a>
+    </div>
+    <div id="map" class="col-md-9"></div>
+    <div id="statistics" class="col-md-3" title="Map Key">
+            <div class="MapKey">Map Legend: Levels of Severity</div>
+            <div class="rectangle1">Severity 1: 0-25 Deaths</div>
+            <div class="rectangle2">Severity 2: 25-50 Deaths</div>
+            <div class="rectangle3">Severity 3: 50-100 Deaths</div>
+            <div class="rectangle4">Severity 4: 100-1000 Deaths</div>
+            <div class="rectangle5">Severity 5: 1000+ Deaths</div>
+            <div id="chart_div"></div>
+    </div>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoibWVhc3VyZSIsImEiOiJjanV6dW00NjIxY3liNDNwZnc4eWozbjY0In0.zj7VWavAGgdjQpOwWoXDqA';
+        var map = new mapboxgl.Map({
+            container: 'map',
+            zoom: 1.,
+            center: [0, 20],
+            style: 'mapbox://styles/measure/ck8515ktb01vd1ilngup1r6rr'
+        });
+
+        map.addControl(new mapboxgl.NavigationControl());
+
+        // filters for classifying earthquakes into five categories based on magnitude
+        var mag1 = ['<', ['get', 'Deaths'], 25];
+        var mag2 = ['all', ['>=', ['get', 'Deaths'], 25],
+            ['<', ['get', 'Deaths'], 50]
+        ];
+        var mag3 = ['all', ['>=', ['get', 'Deaths'], 50],
+            ['<', ['get', 'Deaths'], 100]
+        ];
+        var mag4 = ['all', ['>=', ['get', 'Deaths'], 100],
+            ['<', ['get', 'Deaths'], 1000]
+        ];
+        var mag5 = ['>=', ['get', 'Deaths'], 1000];
+
+        // colors to use for the categories
+        var colors = ['#acf095', '#6bf03c', '#359c11', '#20590c', '#000000'];
+
+        map.on('load', function() {
+            // add a clustered GeoJSON source for a sample set of earthquakes
+            map.addSource('cases', {
+                'type': 'geojson',
+                'data': 'https://opendata.arcgis.com/datasets/6137e495864d471799423ffc91275972_1.geojson',
+                'cluster': true,
+                'clusterRadius': 80,
+                'clusterProperties': {
+                    // keep separate counts for each magnitude category in a cluster
+                    'mag1': ['+', ['case', mag1, 1, 0]],
+                    'mag2': ['+', ['case', mag2, 1, 0]],
+                    'mag3': ['+', ['case', mag3, 1, 0]],
+                    'mag4': ['+', ['case', mag4, 1, 0]],
+                    'mag5': ['+', ['case', mag5, 1, 0]]
+                }
+            });
+            // circle and symbol layers for rendering individual earthquakes (unclustered points)
+            map.addLayer({
+                'id': 'case_circle',
+                'type': 'circle',
+                'source': 'cases',
+                'filter': ['!=', 'cluster', true],
+                'paint': {
+                    'circle-color': [
+                        'case',
+                        mag1,
+                        colors[0],
+                        mag2,
+                        colors[1],
+                        mag3,
+                        colors[2],
+                        mag4,
+                        colors[3],
+                        colors[4]
+                    ],
+                    'circle-opacity': 0.8,
+                    'circle-radius': 22,
+                }
+            });
+            map.addLayer({
+                'id': 'cases_label',
+                'type': 'symbol',
+                'source': 'cases',
+                'filter': ['!=', 'cluster', true],
+                'layout': {
+                    'text-field': [
+                        'number-format',
+                        ['get', 'Deaths'],
+                        {
+                            'min-fraction-digits': 1,
+                            'max-fraction-digits': 1
+                        }
+                    ],
+                    'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+                    'text-size': 12
+                },
+                'paint': {
+                    'text-halo-color':'white',
+                    'text-halo-width': 1,
+                    'text-color': [
+                        'case',
+                        ['<', ['get', 'Deaths'], 3],
+                        'black',
+                        'black',
+                    ]
+                }
+            });
+            
+            
+
+            // When a click event occurs on a feature in the places layer, open a popup at the
+            // location of the feature, with description HTML from its properties.
+            map.on('click', 'case_circle', function(e) {
+                var coordinates = e.features[0].geometry.coordinates.slice();
+                var description = e.features[0].attributes.Deaths;
+
+                // Ensure that if the map is zoomed out such that multiple
+                // copies of the feature are visible, the popup appears
+                // over the copy being pointed to.
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+
+                new mapboxgl.Popup()
+                    .setLngLat(coordinates)
+                    .setHTML(description)
+                    .addTo(map);
+            });
+
+            // objects for caching and keeping track of HTML marker objects (for performance)
+            var markers = {};
+            var markersOnScreen = {};
+
+            function updateMarkers() {
+                var newMarkers = {};
+                var features = map.querySourceFeatures('cases');
+
+                // for every cluster on the screen, create an HTML marker for it (if we didn't yet),
+                // and add it to the map if it's not there already
+                for (var i = 0; i < features.length; i++) {
+                    var coords = features[i].geometry.coordinates;
+                    var props = features[i].properties;
+                    if (!props.cluster) continue;
+                    var id = props.cluster_id;
+
+                    var marker = markers[id];
+                    if (!marker) {
+                        var el = createDonutChart(props);
+                        marker = markers[id] = new mapboxgl.Marker({
+                            element: el
+                        }).setLngLat(coords);
+                    }
+                    newMarkers[id] = marker;
+
+                    if (!markersOnScreen[id]) marker.addTo(map);
+                }
+                // for every marker we've added previously, remove those that are no longer visible
+                for (id in markersOnScreen) {
+                    if (!newMarkers[id]) markersOnScreen[id].remove();
+                }
+                markersOnScreen = newMarkers;
+            }
+
+            // after the GeoJSON data is loaded, update markers on the screen and do so on every map move/moveend
+            map.on('data', function(e) {
+                if (e.sourceId !== 'cases' || !e.isSourceLoaded) return;
+
+                map.on('move', updateMarkers);
+                map.on('moveend', updateMarkers);
+                updateMarkers();
+            });
+        });
+
+        // code for creating an SVG donut chart from feature properties
+        function createDonutChart(props) {
+            var offsets = [];
+            var counts = [
+                props.mag1,
+                props.mag2,
+                props.mag3,
+                props.mag4,
+                props.mag5
+            ];
+            var total = 0;
+            for (var i = 0; i < counts.length; i++) {
+                offsets.push(total);
+                total += counts[i];
+            }
+            var fontSize =
+                total >= 1000 ? 22 : total >= 100 ? 20 : total >= 10 ? 18 : 16;
+            var r = total >= 1000 ? 50 : total >= 100 ? 32 : total >= 10 ? 24 : 18;
+            var r0 = Math.round(r * 0.6);
+            var w = r * 2;
+
+            var html =
+                '<div><svg width="' +
+                w +
+                '" height="' +
+                w +
+                '" viewbox="0 0 ' +
+                w +
+                ' ' +
+                w +
+                '" text-anchor="middle" style="font: ' +
+                fontSize +
+                'px sans-serif">';
+
+            for (i = 0; i < counts.length; i++) {
+                html += donutSegment(
+                    offsets[i] / total,
+                    (offsets[i] + counts[i]) / total,
+                    r,
+                    r0,
+                    colors[i]
+                );
+            }
+            html +=
+                '<circle cx="' +
+                r +
+                '" cy="' +
+                r +
+                '" r="' +
+                r0 +
+                '" fill="white" /><text dominant-baseline="central" transform="translate(' +
+                r +
+                ', ' +
+                r +
+                ')">' +
+                total.toLocaleString() +
+                '</text></svg></div>';
+
+            var el = document.createElement('div');
+            el.innerHTML = html;
+            return el.firstChild;
+        }
+
+        function donutSegment(start, end, r, r0, color) {
+            if (end - start === 1) end -= 0.00001;
+            var a0 = 2 * Math.PI * (start - 0.25);
+            var a1 = 2 * Math.PI * (end - 0.25);
+            var x0 = Math.cos(a0),
+                y0 = Math.sin(a0);
+            var x1 = Math.cos(a1),
+                y1 = Math.sin(a1);
+            var largeArc = end - start > 0.5 ? 1 : 0;
+
+            return [
+                '<path d="M',
+                r + r0 * x0,
+                r + r0 * y0,
+                'L',
+                r + r * x0,
+                r + r * y0,
+                'A',
+                r,
+                r,
+                0,
+                largeArc,
+                1,
+                r + r * x1,
+                r + r * y1,
+                'L',
+                r + r0 * x1,
+                r + r0 * y1,
+                'A',
+                r0,
+                r0,
+                0,
+                largeArc,
+                0,
+                r + r0 * x0,
+                r + r0 * y0,
+                '" fill="' + color + '" />'
+            ].join(' ');
+        }
+    </script>
+
+</body>
+
+</html>
